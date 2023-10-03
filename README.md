@@ -1,2 +1,6 @@
 # Robot-Project-2019
-This is the final working code for the Lancaster University Robot Project that was completed as part of my Mechatronic Master's Degeree.
+This is the Repo for the work complete during the 2019 Lancaster University Robot Project. 
+
+The project was complete as part of a Mechatronnic Engineering Master's Degree.
+
+The robot completed the task of following a line and posting a letter. 
