@@ -3,8 +3,6 @@
  * Final Code - Group U - 18/03/19
  * Author - Benedict Draper-Turner
  */
-
-/*The code is designed to work with an ARDUINO and was written in the ARDUINO IDE*/
  
 #include <Servo.h>
 
@@ -13,16 +11,16 @@ int flag = 0;
 int P = 0;
 int I = 0;
 int D = 0;
-int Kp = 1;
-int Ki = 0;
-int Kd = 6;
+float Kp = 1;
+float Ki = 0;
+float Kd = 5;
 int error;
 int adjustedError;
 int previousError;
 int PIDval;
 int senseInput;
 int setPoint = 0;
-int motorSpeed = 80;
+int motorSpeed = 75;
 int servoAngle = 90;
 
 void calculatePID();
@@ -30,6 +28,37 @@ void calculateError();
 void motorControl();
 
 Servo theServo;
+
+// song setup
+
+int speakerPin = 9;
+
+int length = 42; // the number of notes
+char notes[] = "dfg dfg dfgbbaafg efgedcefgedccefgedcbab  "; // a space represents a rest
+int beats[] = { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 4, 2, 2, 2, 2, 4, 4, 2, 2, 2, 2, 4, 3, 1, 2, 2, 2, 2, 2, 2, 2, 2, 4};
+int tempo = 150;
+
+void playTone(int tone, int duration) {
+  for (long i = 0; i < duration * 1000L; i += tone * 2) {
+    digitalWrite(speakerPin, HIGH);
+    delayMicroseconds(tone);
+    digitalWrite(speakerPin, LOW);
+    delayMicroseconds(tone);
+  }
+}
+
+void playNote(char note, int duration) {
+  char names[] = { 'c', 'd', 'e', 'f', 'g', 'a', 'b', 'C' };
+  int tones[] = { 1915, 1700, 1519, 1432, 1275, 1150, 1014, 956 };
+
+  // play the tone corresponding to the note name
+  for (int i = 0; i < 8; i++) {
+    if (names[i] == note) {
+      playTone(tones[i], duration);
+    }
+  }
+}
+//song setup end 
 
 void setup() {
   
@@ -48,6 +77,10 @@ void setup() {
   setPoint = analogRead(3); //sets the setPoint when the robot is switched on
 
   Serial.begin(9600);
+  
+  //song setup
+  pinMode(speakerPin, OUTPUT);
+ // song setup end
  
 }
 
@@ -94,9 +127,21 @@ void loop() {
       }
       if(count >= 2){
         
-        Serial.print("4");
-        Serial.println();
-        
+        //Serial.print("4");
+        //Serial.println();
+
+    //song loop 
+          for (int i = 0; i < length; i++) {
+    if (notes[i] == ' ') {
+      delay(beats[i] * tempo); // rest
+    } else {
+      playNote(notes[i], beats[i] * tempo);
+    }
+
+    // pause between notes
+    delay(tempo / 2); 
+  }
+   //song loop end     
         }
 
 }
@@ -130,8 +175,8 @@ void motorControl(){            //adjusts motor speed based on error
 
   
 ISR(INT0_vect){     //Interrupt service routine for when robot hits wall
-  
+
   count++;          //Increases count by 1
   cli();
-  
+
 }
